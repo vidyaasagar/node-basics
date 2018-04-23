@@ -1,5 +1,6 @@
 const path = require('path')
 const express = require('express')
+const rp = require('request-promise')
 const exphbs = require('express-handlebars')
 const port = 3000
 
@@ -52,6 +53,27 @@ app.post('/users', function(req,res,next){
             });
 
         });
+})
+
+app.get('/users', function (req, res, next) {
+    md.connect(url, function (err, client) {
+        if (err) {
+            // pass the error to the express error handler
+            return next(err)
+        }
+        const db = client.db('accounts')
+        let collection = db.collection('users')
+        collection.find().toArray(function (err, result) {
+            client.close()
+
+            if (err) {
+                // pass the error to the express error handler
+                return next(err)
+            }
+
+            res.json(result)
+        })
+    })
 })
 
 app.listen(port, (err) => {
