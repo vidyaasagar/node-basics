@@ -1,14 +1,24 @@
-const http = require('http')
+const express = require('express')
+const app = express()
 const port = 3000
 
-const requestHandler = (request, response) => {
-    console.log(request.url)
-    response.end('Hello Node.js server!')
-}
+app.use((request, response, next) => {
+    console.log(request.headers)
+    next()
+})
 
-const server = http.createServer(requestHandler)
+app.use((request, response, next) => {
+    request.chance = Math.random()
+    next()
+})
 
-server.listen(port, (err) => {
+app.get('/', (request, response) => {
+    response.json({
+        chance: request.chance
+    })
+})
+
+app.listen(port, (err) => {
     if (err) {
         return console.log('something bad happened', err)
     }
