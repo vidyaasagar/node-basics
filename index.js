@@ -1,20 +1,22 @@
+const path = require('path')
 const express = require('express')
-const app = express()
+const exphbs = require('express-handlebars')
 const port = 3000
 
-app.use((request, response, next) => {
-    console.log(request.headers)
-    next()
-})
+const app = express()
 
-app.use((request, response, next) => {
-    request.chance = Math.random()
-    next()
-})
+// initializes the handlebars engine and sets the layouts directory to views/layouts
+app.engine('.hbs', exphbs({
+    defaultLayout: 'main',
+    extname: '.hbs',
+    layoutsDir: path.join(__dirname, 'views/layouts')
+}))
+app.set('view engine', '.hbs')
+app.set('views', path.join(__dirname, 'views'))
 
 app.get('/', (request, response) => {
-    response.json({
-        chance: request.chance
+    response.render('home', {
+        name: 'John'
     })
 })
 
